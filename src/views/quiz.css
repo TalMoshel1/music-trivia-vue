@@ -1,0 +1,6 @@
+.quizPage {
+  width: 100%;
+  min-height: 60svh;
+  display: grid;
+  place-items: center;
+}

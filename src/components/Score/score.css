@@ -1,0 +1,17 @@
+.scoreItem {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border-bottom: 0.0625rem dashed var(--color-border);
+  padding-block: 0.25rem;
+}
+
+.scoreName {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.scoreValue {
+  font-weight: 700;
+  color: var(--color-accent);
+}

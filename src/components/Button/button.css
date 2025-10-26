@@ -1,0 +1,29 @@
+.baseButton {
+  padding: 0.9rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.15s ease;
+  width: fit-content;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+}
+
+.baseButtonPrimary {
+  background-color: var(--color-brand);
+  color: #0b0e14;
+}
+
+.baseButtonPrimary:hover {
+  background-color: var(--color-brand-hover);
+  transform: translateY(-0.1rem);
+}
+
+.baseButtonNeutral {
+  background-color: var(--color-accent);
+  color: #fff;
+}
+
+.baseButtonNeutral:hover {
+  background-color: var(--color-accent-hover);
+  transform: translateY(-0.1rem);
+}
