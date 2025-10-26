@@ -38,9 +38,6 @@ defineEmits<{
 
 const game = useGameStore();
 
-onMounted(() => {
-  game.playSound('');
-});
 </script>
 
 <style src="./board.css"></style>

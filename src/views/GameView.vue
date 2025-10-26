@@ -1,65 +1,80 @@
-<template>
-  <main class="gamePage">
-    <BoardView
-      v-if="game.hasBoardResult"
-      :boardResults="game.boardResult ?? []"
-      @resetGame="resetGame"
-    />
-
-    <section v-else-if="!started && ready" class="startScreen">
-      <label for="playerName" class="startLabel">Enter your name</label>
-      <input id="playerName" v-model="playerName" class="startInput" />
-      <button class="startButton" @click="startGame">Start</button>
-    </section>
-
-    <QuizView
-      v-else-if="started && ready"
-      :questions="questions"
-      :player-name="playerName"
-      @quizComplete="handleQuizComplete"
-    />
-
-    <section v-else class="loadingWrapper">
-      <h2>Loading...</h2>
-      <div class="loaderCircle"></div>
-    </section>
-  </main>
-</template>
-
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useFetch } from '@/helpers/useFetch';
 import { useGameStore } from '@/store/gameStore';
 import QuizView from './QuizView.vue';
-import BoardView from './BoardView.vue';
+import type { QuestionInterface } from '@/interfaces/api';
 
 const game = useGameStore();
-const playerName = ref('');
 const started = ref(false);
+const playerName = ref('');
 
-const { data } = useFetch('https://music-trivia.onrender.com/api/question');
+const { data } = useFetch<QuestionInterface[]>('https://music-trivia.onrender.com/api/question');
 const questions = computed(() => data.value || []);
 const ready = computed(() => questions.value.length > 0);
 
 function startGame() {
-  started.value = true;
+  if (playerName.value.trim()) started.value = true;
 }
 
-function resetGame() {
-  window.location.reload();
-}
-
-async function handleQuizComplete(payload: { answers: unknown[] }) {
-  const res = await fetch('https://music-trivia.onrender.com/api/score', {
-    method: 'POST',
-    headers: { 'Content-type': 'application/json' },
-    body: JSON.stringify({ answers: payload.answers, name: playerName.value }),
-  });
-  const result = await res.json();
-  game.myScore = result;
-  await game.fetchBoard();
-  started.value = false;
+function handleQuizComplete(payload: any) {
+  game.setBoardResult(payload.answers);
 }
 </script>
 
-<style src="./game.css"></style>
+<template>
+  <div class="game-container">
+    <div v-if="!started" class="start-screen">
+      <input v-model="playerName" placeholder="Enter your name" class="player-input" />
+      <button class="btnPrimary" @click="startGame">Start Game</button>
+    </div>
+
+    <QuizView
+      v-else-if="started && ready"
+      :questions="questions"
+      :playerName="playerName"
+      @quizComplete="handleQuizComplete"
+    />
+  </div>
+</template>
+
+<style scoped>
+.game-container {
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.player-input {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  border-radius: var(--radius-sm);
+  border: 0.1rem solid var(--color-border);
+  text-align: center;
+  outline: none;
+}
+
+.btnPrimary {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.btnPrimary:hover {
+  background: var(--color-accent-hover);
+}
+</style>
